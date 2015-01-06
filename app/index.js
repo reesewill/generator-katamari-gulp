@@ -61,6 +61,9 @@ var KatamariGulpGenerator = yeoman.generators.Base.extend({
     this.copy('src/fallback.min.js', 'src/common/js/libs/fallback.min.js');
     this.copy('src/index.coffee', 'src/common/js/main.coffee');
     this.copy('src/index.styl', 'src/common/css/all.styl');
+    this.copy('src/_colors.styl', 'src/common/css/helpers/_colors.styl');
+    this.copy('src/_reset.styl', 'src/common/css/quarks/_reset.styl');
+    this.copy('src/_clearfix.styl', 'src/common/css/quarks/_clearfix.styl');
     this.copy('_gitignore', '.gitignore');
   },
 
