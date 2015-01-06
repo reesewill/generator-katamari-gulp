@@ -93,15 +93,15 @@ gulp.task "stylus", ["sprite"], ->
           inline: true
           sourceRoot: "."
           basePath: ".."}
-      .pipe sourcemaps.init
-          loadMaps: true
-      .pipe pleeease
-          minifier: false
-          sourcemaps: true
-      .pipe sourcemaps.write("./",
-          includeContent: false
-          sourceRoot: "."
-      )
+#      .pipe sourcemaps.init
+#          loadMaps: true
+#      .pipe pleeease
+#          minifier: false
+#          sourcemaps: true
+#      .pipe sourcemaps.write("./",
+#          includeContent: false
+#          sourceRoot: "."
+#      )
       .pipe gulp.dest DEST
       .pipe browserSync.reload stream:true
 
