@@ -1,24 +1,4 @@
-doctype html
-html(lang='ja')
-  head
-    meta(charset='UTF-8')
-    title <%= projectName %>
-    meta(name="apple-mobile-web-app-capable", content="yes")
-    meta(name="apple-mobile-web-app-status-bar-style" content="black")
-    meta(name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no")
-    link(rel='stylesheet', href='index.css')
-  body
-    h1 Project: <%= projectName %> has installed !!
-    br
-    h2 Browser Sync Test
-    input#myid(type='text', name='t001')
-    br
-    label
-      input(type='radio', name='r')
-      | radio1
-    label
-      input(type='radio', name='r')
-      | radio2
-    div(style='height: 3000px;')
-
-    script(src='./index.js')
+extends views/layout
+                    
+block main
+    

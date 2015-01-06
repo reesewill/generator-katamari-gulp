@@ -14,9 +14,13 @@ plumber = require 'gulp-plumber'
 watchify = require 'watchify'
 pngcrush = require 'imagemin-pngcrush'
 pngquant = require 'imagemin-pngquant'
+sourcemaps = require 'gulp-sourcemaps'
+pleeease = require 'gulp-pleeease'
 
 expand = (ext)-> rename (path) -> _.tap path, (p) -> p.extname = ".#{ext}"
 notify = (filename) -> console.log(filename)
+
+environment = process.env.NODE_ENV or "development"
 
 DEST = "./dist"
 SRC = "./src"
@@ -72,19 +76,39 @@ gulp.task 'browserify', ->
 nib = require 'nib'
 
 gulp.task "stylus", ["sprite"], ->
-  gulp.src paths.css
-    .pipe plumber()
-    .pipe changed DEST
-    .pipe stylus use: nib(), errors: true
-    .pipe expand "css"
-    .pipe gulp.dest DEST
-    .pipe gulp.dest CHANGED
-    .pipe browserSync.reload stream:true
+  
+  if environment is "production"
+    gulp.src paths.css
+      .pipe plumber()
+      .pipe changed DEST
+      .pipe stylus use: nib(), errors: true
+      .pipe expand "css"
+      .pipe gulp.dest DEST
+      .pipe gulp.dest CHANGED
+      .pipe browserSync.reload stream:true
+  else
+    gulp.src paths.css
+      .pipe plumber()
+      .pipe stylus sourcemap: {
+          inline: true
+          sourceRoot: "."
+          basePath: ".."}
+      .pipe sourcemaps.init
+          loadMaps: true
+      .pipe pleeease
+          minifier: false
+          sourcemaps: true
+      .pipe sourcemaps.write("./",
+          includeContent: false
+          sourceRoot: "."
+      )
+      .pipe gulp.dest DEST
+      .pipe browserSync.reload stream:true
 
 gulp.task "jade", ->
   gulp.src paths.html
     .pipe plumber()
-    .pipe jade pretty: true
+    .pipe jade pretty: false
     .pipe expand "html"
     .pipe gulp.dest DEST
     .pipe gulp.dest CHANGED
