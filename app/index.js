@@ -45,10 +45,11 @@ var KatamariGulpGenerator = yeoman.generators.Base.extend({
     this.mkdir('src/common/js/libs');
     this.mkdir('src/common/css');
     this.mkdir('src/common/images');
-    this.mkdir('src/common/css/helpers');
-    this.mkdir('src/common/css/quarks');
-    this.mkdir('src/common/css/atoms');
-    this.mkdir('src/common/css/molecules');
+    this.mkdir('src/common/sprite');
+    this.mkdir('src/common/css/_helpers');
+    this.mkdir('src/common/css/_quarks');
+    this.mkdir('src/common/css/_atoms');
+    this.mkdir('src/common/css/_molecules');
     this.mkdir('src/views');
     this.mkdir('src/views/_partials');
     this.mkdir('src/views/_templates');
@@ -58,12 +59,16 @@ var KatamariGulpGenerator = yeoman.generators.Base.extend({
     this.template('src/index.jade', 'src/index.jade');
     this.template('src/layout.jade', 'src/views/layout.jade');
     this.copy('src/jquery.min.js', 'src/common/js/libs/jquery.min.js');
-    this.copy('src/fallback.min.js', 'src/common/js/libs/fallback.min.js');
     this.copy('src/index.coffee', 'src/common/js/main.coffee');
-    this.copy('src/index.styl', 'src/common/css/all.styl');
-    this.copy('src/_colors.styl', 'src/common/css/helpers/_colors.styl');
-    this.copy('src/_reset.styl', 'src/common/css/quarks/_reset.styl');
-    this.copy('src/_clearfix.styl', 'src/common/css/quarks/_clearfix.styl');
+    this.copy('src/all.scss', 'src/common/css/all.scss');
+    this.copy('src/colors.scss', 'src/common/css/_helpers/colors.scss');
+    this.copy('src/constants.scss', 'src/common/css/_helpers/constants.scss');
+    this.copy('src/layout.scss', 'src/common/css/_atoms/layout.scss');
+    this.copy('src/reset.scss', 'src/common/css/_quarks/reset.scss');
+    this.copy('src/clearfix.scss', 'src/common/css/_quarks/clearfix.scss');
+    this.copy('src/headers.scss', 'src/common/css/_quarks/headers.scss');
+    this.copy('src/list.scss', 'src/common/css/_quarks/list.scss');
+    this.copy('src/links.scss', 'src/common/css/_quarks/links.scss');
     this.copy('_gitignore', '.gitignore');
   },
 

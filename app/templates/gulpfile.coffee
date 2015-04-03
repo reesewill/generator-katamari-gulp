@@ -1,21 +1,21 @@
 _ = require 'underscore'
 gulp = require 'gulp'
 jade = require 'gulp-jade'
-stylus = require 'gulp-stylus'
+sass = require 'gulp-sass'
 rename = require 'gulp-rename'
 uglify = require 'gulp-uglify'
 changed = require 'gulp-changed'
 imagemin = require 'gulp-imagemin'
 transform = require 'vinyl-transform'
+sourcemaps = require 'gulp-sourcemaps'
 browserify = require 'browserify'
 browserSync = require 'browser-sync'
 spritesmith = require 'gulp.spritesmith'
+mediaqueries = require 'gulp-combine-media-queries'
 plumber = require 'gulp-plumber'
 watchify = require 'watchify'
 pngcrush = require 'imagemin-pngcrush'
 pngquant = require 'imagemin-pngquant'
-sourcemaps = require 'gulp-sourcemaps'
-pleeease = require 'gulp-pleeease'
 
 expand = (ext)-> rename (path) -> _.tap path, (p) -> p.extname = ".#{ext}"
 notify = (filename) -> console.log(filename)
@@ -28,12 +28,16 @@ CHANGED = "./__modified"
 
 # ファイルタイプごとに無視するファイルなどを設定
 paths =
-  js: ["#{SRC}/**/*.coffee", "!#{SRC}/**/_**/*.coffee", "!#{SRC}/**/_*.coffee"]
-  css: ["#{SRC}/**/*.styl", "!#{SRC}/**/sprite*.styl", "!#{SRC}/**/_**/*.styl", "!#{SRC}/**/_*.styl"]
-  img: ["#{SRC}/**/*.{png, jpg, gif}", "!#{SRC}/**/sprite/**/*.png"]
-  html: ["#{SRC}/**/*.jade", "!#{SRC}/**/_**/*.jade", "!#{SRC}/**/_*.jade"]
-  reload: ["#{DEST}/**/*", "!#{DEST}/**/*.css"]
-  sprite: "#{SRC}/**/sprite/**/*.png"
+    js: ["#{SRC}/**/*.coffee", "!#{SRC}/**/_**/*.coffee", "!#{SRC}/**/_*.coffee"]
+    jsw: ["#{SRC}/**/*.coffee", "#{SRC}/views/_templates/*jade"]
+    jslib: ["#{SRC}/**/*.js"]
+    css: ["#{SRC}/**/*.scss", "!#{SRC}/**/sprite*.styl", "!#{SRC}/**/_**/*.scss", "!#{SRC}/**/_*.scss"]
+    cssw: ["#{SRC}/**/*.scss"]
+    img: ["#{SRC}/**/*.{png, jpg, gif}", "!#{SRC}/**/sprite/**/*.png"]
+    html: ["#{SRC}/**/*.jade", "!#{SRC}/**/_**/*.jade", "!#{SRC}/**/_*.jade"]
+    htmlw: ["#{SRC}/**/*.jade"]
+    reload: ["#{DEST}/**/*", "!#{DEST}/**/*.css"]
+    sprite: "#{SRC}/**/sprite/**/*.png"
 
 gulp.task 'browserify', ->
 
@@ -71,17 +75,20 @@ gulp.task 'browserify', ->
       .pipe gulp.dest CHANGED
 
   bundle()
+        
+gulp.task "js", ->
+    
+    gulp.src paths.jslib
+        .pipe gulp.dest DEST
 
-# FW for Stylus
-nib = require 'nib'
-
-gulp.task "stylus", ["sprite"], ->
+gulp.task "sass", ["sprite"], ->
   
   if environment is "production"
     gulp.src paths.css
       .pipe plumber()
       .pipe changed DEST
-      .pipe stylus use: nib(), errors: true
+      .pipe sass()
+      #.pipe mediaqueries()
       .pipe expand "css"
       .pipe gulp.dest DEST
       .pipe gulp.dest CHANGED
@@ -89,19 +96,9 @@ gulp.task "stylus", ["sprite"], ->
   else
     gulp.src paths.css
       .pipe plumber()
-      .pipe stylus sourcemap: {
-          inline: true
-          sourceRoot: "."
-          basePath: ".."}
-#      .pipe sourcemaps.init
-#          loadMaps: true
-#      .pipe pleeease
-#          minifier: false
-#          sourcemaps: true
-#      .pipe sourcemaps.write("./",
-#          includeContent: false
-#          sourceRoot: "."
-#      )
+      .pipe sourcemaps.init()
+      .pipe sass()
+      .pipe sourcemaps.write()
       .pipe gulp.dest DEST
       .pipe browserSync.reload stream:true
 
@@ -129,11 +126,11 @@ gulp.task "sprite", ->
   a = gulp.src paths.sprite
     .pipe plumber()
     .pipe spritesmith
-      imgName: 'images/sprite.png'
-      cssName: 'images/sprite.styl'
-      imgPath: 'images/sprite.png'
+      imgName: 'common/images/sprite.png'
+      cssName: 'common/images/sprite.styl'
+      imgPath: '../images/sprite.png'
       algorithm: 'binary-tree'
-      cssFormat: 'stylus'
+      cssFormat: 'sass'
       padding: 4
 
   a.img.pipe gulp.dest SRC
@@ -141,10 +138,11 @@ gulp.task "sprite", ->
   a.css.pipe gulp.dest SRC
 
 gulp.task 'watch', ->
-    gulp.watch [paths.js[0], "#{SRC}/**/_*/*"], ['browserify']
-    gulp.watch paths.css  , ['stylus']
-    gulp.watch paths.html , ['jade']
+    gulp.watch paths.jsw, ['browserify']
+    gulp.watch paths.cssw  , ['sass']
+    gulp.watch paths.htmlw , ['jade']
+    gulp.watch paths.sprite , ['sprite']
     gulp.watch paths.reload, -> browserSync.reload once: true
 
-gulp.task "default", ['jade', 'stylus', 'browserify', 'browser-sync', 'watch'] 
-gulp.task "build", ['imagemin', 'stylus', 'browserify', 'jade']
+gulp.task "default", ['jade', 'sass', 'js', 'browserify', 'browser-sync', 'watch'] 
+gulp.task "build", ['imagemin', 'sass', 'browserify', 'jade']
