@@ -9,11 +9,11 @@ var KatamariGulpGenerator = yeoman.generators.Base.extend({
   init: function () {
     this.pkg = require('../package.json');
 
-    this.on('end', function () {
-      if (!this.options['skip-install']) {
-        this.installDependencies();
-      }
-    });
+    // this.on('end', function () {
+    //   if (!this.options['skip-install']) {
+    //     this.installDependencies();
+    //   }
+    // });
   },
 
   askFor: function () {
@@ -23,7 +23,7 @@ var KatamariGulpGenerator = yeoman.generators.Base.extend({
     this.log(this.yeoman);
 
     // replace it with a short and sweet description of your generator
-    this.log(chalk.magenta('You\'re using the fantastic KatamariGulp generator.'));
+    this.log(chalk.magenta('You\'re using the fantastic KatamariGulp generator!'));
 
     var prompts = [{
       name: 'projectName',
@@ -43,6 +43,7 @@ var KatamariGulpGenerator = yeoman.generators.Base.extend({
     this.mkdir('src/common');
     this.mkdir('src/common/js');
     this.mkdir('src/common/js/libs');
+    this.mkdir('src/common/js/_etc');
     this.mkdir('src/common/css');
     this.mkdir('src/common/images');
     this.mkdir('src/common/sprite');
@@ -55,10 +56,13 @@ var KatamariGulpGenerator = yeoman.generators.Base.extend({
     this.mkdir('src/views/_templates');
 
     this.template('_package.json', 'package.json');
-    this.template('gulpfile.coffee', 'gulpfile.coffee');
+    this.copy('gulpfile.coffee', 'gulpfile.coffee');
     this.template('src/index.jade', 'src/index.jade');
-    this.template('src/layout.jade', 'src/views/layout.jade');
+    this.template('src/_layout.jade', 'src/views/_layout.jade');
     this.copy('src/jquery.min.js', 'src/common/js/libs/jquery.min.js');
+    this.copy('src/jquery.mobile.min.js', 'src/common/js/libs/jquery.mobile.min.js');
+    this.copy('src/polyfill.coffee', 'src/common/js/_etc/polyfill.coffee');
+    this.copy('src/scroll.coffee', 'src/common/js/_etc/scroll.coffee');
     this.copy('src/index.coffee', 'src/common/js/main.coffee');
     this.copy('src/all.scss', 'src/common/css/all.scss');
     this.copy('src/colors.scss', 'src/common/css/_helpers/colors.scss');
@@ -69,6 +73,7 @@ var KatamariGulpGenerator = yeoman.generators.Base.extend({
     this.copy('src/headers.scss', 'src/common/css/_quarks/headers.scss');
     this.copy('src/list.scss', 'src/common/css/_quarks/list.scss');
     this.copy('src/links.scss', 'src/common/css/_quarks/links.scss');
+    this.copy('src/retina-sprite.scss', 'src/common/css/_helpers/retina-sprite.scss');
     this.copy('_gitignore', '.gitignore');
   },
 

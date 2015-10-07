@@ -1,0 +1,58 @@
+@mixin useSprite($sprite) {
+  $a: $spritesheet_width * .5;
+  $b: $spritesheet_height * .5;
+  background-size: $a $b;
+  @include sprite-image($sprite);
+  @include spriteWidth($sprite);
+  @include spriteHeight($sprite);
+  @include spritePosition($sprite);
+
+  // .ie8 & {
+  //   @include sprite-width($sprite);
+  //   @include sprite-height($sprite);
+  //   @include sprite-position($sprite);
+  // }
+}
+@mixin useSprite-x($sprite) {
+  $a: $spritesheet_width * .5;
+  $b: $spritesheet_height * .5;
+  background-size: $a $b;
+  background-repeat: repeat-x;
+  /* @include spriteWidth($sprite); */
+  @include sprite-image($sprite);
+  @include spriteHeight($sprite);
+  @include spritePosition($sprite);
+}
+@mixin useSpriteXY($sprite) {
+  $a: $spritesheet_width * .5;
+  $b: $spritesheet_height * .5;
+  background-size: $a $b;
+  /* @include spriteWidth($sprite); */
+  @include sprite-image($sprite);
+  @include spritePosition($sprite);
+}
+
+
+//sprite retina
+@mixin spriteWidth($sprite) {
+  width: nth($sprite, 5) * .5
+}
+@mixin spriteHeight($sprite) {
+  height: nth($sprite, 6) * .5
+}
+@mixin spritePosition($sprite) {
+  $sprite-offset-x: nth($sprite, 3) * .5;
+  $sprite-offset-y: nth($sprite, 4) * .5;
+  background-position: $sprite-offset-x $sprite-offset-y;
+}
+@mixin spriteImage($sprite) {
+  $sprite-image: nth($sprite, 9);
+  background-image: url($sprite-image)
+}
+@mixin sprite($sprite) {
+  background-size: $spritesheet_width $spritesheet_height;
+  @include sprite-image($sprite);
+  @include sprite-position($sprite);
+  @include sprite-width($sprite);
+  @include sprite-height($sprite);
+}
